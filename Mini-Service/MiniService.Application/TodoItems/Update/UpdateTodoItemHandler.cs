@@ -1,17 +1,17 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Common.Errors;
-using Messaging.MiniService;
-using Messaging.MiniService.Enums;
-using MiniService.Data.Domain.Entities;
-using MiniService.Data.Persistence;
 using FluentResults;
 using Mapster;
 using MassTransit;
 using MediatR;
+using Messaging.MiniService;
+using Messaging.MiniService.Enums;
 using Microsoft.EntityFrameworkCore;
+using MiniService.Data.Domain.Entities;
+using MiniService.Data.Persistence;
 
-namespace MiniService.Application.TodoItems.UpdateTodoItem
+namespace MiniService.Application.TodoItems.Update
 {
     public class UpdateTodoItemHandler : IRequestHandler<UpdateTodoItemCommand, Result>
     {

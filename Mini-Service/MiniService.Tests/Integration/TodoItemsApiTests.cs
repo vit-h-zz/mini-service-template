@@ -9,21 +9,21 @@ using Common.Extensions;
 using Common.Tests;
 using Messaging.MiniService;
 using Messaging.MiniService.Enums;
-using MiniService.Application.TodoItems.CreateTodoItem;
 using MiniService.Application.TodoItems.GetFinishedWork;
-using MiniService.Application.TodoItems.UpdateTodoItem;
 using MiniService.Data.Domain.Entities;
 using MiniService.Data.Persistence;
 using MiniService.Features.Todos;
 using MiniService.Tests.Fakers;
 using MiniService.Tests.Helpers;
 using FluentAssertions;
-using FluentResults;
+using NodaTime;
 using Mapster;
 using MassTransit;
 using MassTransit.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using MiniService.Application.TodoItems.Create;
+using MiniService.Application.TodoItems.Update;
 
 namespace MiniService.Tests.Integration
 {
@@ -52,22 +52,35 @@ namespace MiniService.Tests.Integration
         }
 
         [Theory, AutoMoqData]
-        public async Task CreateTodoByConsumer(ToDoItemNewFaker itemFaker)
+        public async Task CreateTodoByConsumer(ToDoItemExistingFaker existingFaker)
         {
             // arrange
-            var requestClient = _harness.Bus.CreateRequestClient<CreateTodoItemCommand>();
-            var cmd = itemFaker.Generate().Adapt<CreateTodoItemCommand>();
+            var item1 = existingFaker.Generate();
+            var item2 = existingFaker.Generate();
+            _dbContext.TodoItems.AddRange(item1, item2);
+            await _dbContext.SaveChangesAsync();
+
+            var closingTime = new Instant();
+            _factory.ClockMock.Setup(_ => _.GetCurrentInstant()).Returns(closingTime);
+
+            var requestClient = _harness.Bus.CreateRequestClient<CompleteTodoItemCmd>();
+            var cmd = new CompleteTodoItemCmd() { TodoId = item1.Id };
 
             // act
-            var response = await requestClient.GetResponse<Result<TodoItem>>(cmd);
+            var response = await requestClient.GetResponse<CompleteTodoItemResult>(cmd);
 
             // assert
-            response.Message.Value.Title.Should().Be(cmd.Title);
-            response.Message.Value.Priority.Should().Be(cmd.Priority);
+            response.Message.ClosingTime.Should().Be(closingTime.ToDateTimeOffset());
+
+            _dbContext.Entry(item1).Reload();
+            item1.Done.Should().BeTrue();
+
+            _dbContext.Entry(item2).Reload();
+            item2.Done.Should().BeFalse();
 
             var consumerHarness = _scope.ServiceProvider.GetRequiredService<IConsumerTestHarness<TodosConsumer>>();
-            consumerHarness.Consumed.Select<CreateTodoItemCommand>().Should().HaveCount(1);
-            _harness.Published.Select<TodoUpdated>().Should().HaveCount(1);
+            consumerHarness.Consumed.Select<CompleteTodoItemCmd>().Should().HaveCount(1);
+            _harness.Published.Select<WorkDone>().Should().HaveCount(1);
         }
 
         [Theory, AutoMoqData]
@@ -78,7 +91,7 @@ namespace MiniService.Tests.Integration
             await _dbContext.SaveChangesAsync();
 
             // act
-            var apiResponse = await _client.GetAsync("api/Todos");
+            var apiResponse = await _client.GetAsync(ToDoUrl);
 
             // assert
             await apiResponse.IsSucceed();

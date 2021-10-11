@@ -1,7 +1,7 @@
-﻿using Messaging.MiniService.Enums;
-using FluentValidation;
+﻿using FluentValidation;
+using Messaging.MiniService.Enums;
 
-namespace MiniService.Application.TodoItems.CreateTodoItem
+namespace MiniService.Application.TodoItems.Create
 {
     public class CreateTodoItemValidator : AbstractValidator<CreateTodoItemCommand>
     {

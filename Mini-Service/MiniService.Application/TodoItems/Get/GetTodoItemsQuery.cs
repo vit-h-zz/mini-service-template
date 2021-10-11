@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using MiniService.Data.Domain.Entities;
 using FluentResults;
 using MediatR;
+using MiniService.Data.Domain.Entities;
 
-namespace MiniService.Application.TodoItems.GetTodoItems
+namespace MiniService.Application.TodoItems.Get
 {
     public record GetTodoItemsQuery : IRequest<Result<List<TodoItem>>>
     {

@@ -7,7 +7,7 @@ using Common.Errors;
 using FluentResults;
 using MediatR;
 
-namespace MiniService.Application.TodoItems.DeleteTodoItem
+namespace MiniService.Application.TodoItems.Delete
 {
     public class DeleteTodoItemHandler : IRequestHandler<DeleteTodoItemCommand, Result>
     {

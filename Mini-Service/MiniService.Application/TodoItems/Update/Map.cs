@@ -1,8 +1,8 @@
-﻿using Messaging.MiniService;
+﻿using Mapster;
+using Messaging.MiniService;
 using MiniService.Data.Domain.Entities;
-using Mapster;
 
-namespace MiniService.Application.TodoItems.UpdateTodoItem
+namespace MiniService.Application.TodoItems.Update
 {
     public class Map : IRegister
     {

@@ -1,12 +1,11 @@
-using GreenPipes;
+﻿using GreenPipes;
 using MassTransit;
-using Sentry;
 using System;
 using System.Threading.Tasks;
 
 namespace MiniService.Tests.Helpers
 {
-    public class SentryConsumeFilterMock<TMessage> : IFilter<ConsumeContext<TMessage>> where TMessage : class
+    public class ConsumeFilterMock<TMessage> : IFilter<ConsumeContext<TMessage>> where TMessage : class
     {
         public async Task Send(ConsumeContext<TMessage> context, IPipe<ConsumeContext<TMessage>> next)
         {
@@ -14,10 +13,8 @@ namespace MiniService.Tests.Helpers
             {
                 await next.Send(context);
             }
-            catch (Exception e) //only for real bugs
+            catch (Exception) //only for real bugs
             {
-                CaptureException(null!, e);
-
                 // if (context.ResponseAddress != null) //figure out
                 //await context.RespondAsync<ErrorMessage>(new object());
 
@@ -31,11 +28,7 @@ namespace MiniService.Tests.Helpers
 
         public void Probe(ProbeContext context)
         {
-            context.CreateFilterScope("SentryConsumeFilter");
-        }
-
-        private void CaptureException(IHub hub, Exception e)
-        {
+            context.CreateFilterScope("ConsumeFilterMock");
         }
     }
 }

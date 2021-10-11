@@ -1,15 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Messaging.MiniService;
-using Messaging.MiniService.Enums;
-using MiniService.Data.Domain.Entities;
-using MiniService.Data.Persistence;
 using FluentResults;
 using Mapster;
 using MassTransit;
 using MediatR;
+using Messaging.MiniService;
+using Messaging.MiniService.Enums;
+using MiniService.Data.Domain.Entities;
+using MiniService.Data.Persistence;
 
-namespace MiniService.Application.TodoItems.CreateTodoItem
+namespace MiniService.Application.TodoItems.Create
 {
     public class CreateTodoItemHandler : IRequestHandler<CreateTodoItemCommand, Result<TodoItem>>
     {

@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace MiniService.Data.Persistence.Configurations
+namespace MiniService.Data.Persistence.Configs
 {
-    public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
+    public class TodoItemConfig : IEntityTypeConfiguration<TodoItem>
     {
         public void Configure(EntityTypeBuilder<TodoItem> b)
         {

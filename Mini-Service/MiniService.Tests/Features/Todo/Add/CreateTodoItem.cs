@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using MassTransit;
 using Messaging.MiniService;
-using MiniService.Application.TodoItems.CreateTodoItem;
+using MiniService.Application.TodoItems.Create;
 using MiniService.Tests.Helpers;
 using Moq;
 using Xunit;

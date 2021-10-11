@@ -3,13 +3,13 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Service.Controllers;
-using MiniService.Application.TodoItems.CreateTodoItem;
-using MiniService.Application.TodoItems.DeleteTodoItem;
 using MiniService.Application.TodoItems.GetFinishedWork;
-using MiniService.Application.TodoItems.GetTodoItems;
-using MiniService.Application.TodoItems.UpdateTodoItem;
 using MiniService.Data.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using MiniService.Application.TodoItems.Create;
+using MiniService.Application.TodoItems.Delete;
+using MiniService.Application.TodoItems.Get;
+using MiniService.Application.TodoItems.Update;
 
 namespace MiniService.Features.Todos
 {

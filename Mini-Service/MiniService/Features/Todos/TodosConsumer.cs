@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Mapster;
 using MassTransit;
 using MediatR;
 using Messaging.MiniService;
-using NodaTime;
+using MiniService.Application.TodoItems.Complete;
 
 namespace MiniService.Features.Todos
 {
@@ -11,22 +11,17 @@ namespace MiniService.Features.Todos
         : IConsumer<CompleteTodoItemCmd>
     {
         private readonly IMediator _mediator;
-        private readonly IClock _clock;
 
-        public TodosConsumer(IMediator mediator, IClock clock)
+        public TodosConsumer(IMediator mediator)
         {
             _mediator = mediator;
-            _clock = clock;
         }
 
         public async Task Consume(ConsumeContext<CompleteTodoItemCmd> context)
         {
-            var result = await _mediator.Send(context.Message, context.CancellationToken);
+            var result = await _mediator.Send(context.Message.Adapt<CompleteTodoItemCommand>(), context.CancellationToken);
 
-            await context.RespondAsync(new CompleteTodoItemResult()
-            {
-                ClosingTime = _clock.GetCurrentInstant().ToDateTimeOffset()
-            });
+            await context.RespondAsync(result.Value);
         }
     }
 }

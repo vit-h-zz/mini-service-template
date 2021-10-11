@@ -2,6 +2,7 @@
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
 using Common.Tests;
+using FluentAssertions.Common;
 
 namespace MiniService.Tests.Helpers
 {
@@ -12,12 +13,6 @@ namespace MiniService.Tests.Helpers
             var fixture = new Fixture()
                 .Customize(new AutoMoqCustomization())
                 .RegisterFakers<AutoMoqDataAttribute>();
-
-            // Register Type Relays
-            //foreach (var typeRelay in Initializer.TypeRelays)
-            //{
-            //    fixture.Customizations.Add(typeRelay);
-            //}
 
             return fixture;
         })

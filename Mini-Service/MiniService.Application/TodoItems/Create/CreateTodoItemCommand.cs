@@ -3,7 +3,7 @@ using MiniService.Data.Domain.Entities;
 using FluentResults;
 using MediatR;
 
-namespace MiniService.Application.TodoItems.CreateTodoItem
+namespace MiniService.Application.TodoItems.Create
 {
     public record CreateTodoItemCommand(
         string Title,

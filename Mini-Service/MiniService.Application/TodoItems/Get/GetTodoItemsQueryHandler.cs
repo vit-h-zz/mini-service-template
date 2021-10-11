@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MiniService.Data.Domain.Entities;
-using MiniService.Data.Persistence;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MiniService.Data.Domain.Entities;
+using MiniService.Data.Persistence;
 
-namespace MiniService.Application.TodoItems.GetTodoItems
+namespace MiniService.Application.TodoItems.Get
 {
     public class GetTodoItemsQueryHandler : IRequestHandler<GetTodoItemsQuery, Result<List<TodoItem>>>
     {

@@ -1,8 +1,8 @@
 ﻿using System;
-using Messaging.MiniService.Enums;
 using FluentValidation;
+using Messaging.MiniService.Enums;
 
-namespace MiniService.Application.TodoItems.UpdateTodoItem
+namespace MiniService.Application.TodoItems.Update
 {
     public class UpdateTodoItemValidator : AbstractValidator<UpdateTodoItemCommand>
     {

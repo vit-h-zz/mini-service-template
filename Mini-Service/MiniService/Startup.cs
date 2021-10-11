@@ -31,6 +31,14 @@ namespace MiniService
         // ReSharper disable once IdentifierTypo
         public void ConfigureServices(IServiceCollection s)
         {
+            //s.AddHostedService<BackgroundWorker>();
+            //s.AddSingleton<IBackgroundTaskQueue<Func<CancellationToken, ValueTask>>>(ctx =>
+            //{
+            //    if (!int.TryParse(Configuration["QueueCapacity"], out var queueCapacity))
+            //        queueCapacity = 100;
+            //    return new BackgroundTaskQueue<Func<CancellationToken, ValueTask>>(queueCapacity);
+            //});
+
             s.AddServiceCore();
 
             s.AddTelemetry(Configuration, ServiceName);
@@ -47,8 +55,7 @@ namespace MiniService
             s.AddControllers(o => o.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseRouteTransformer())))
                 .AddControllersAsServices();
 
-            if (!Configuration.IsTrue("MassTransit:Disable"))
-                s.AddMassTransitServices(Configuration, typeof(Startup).Assembly);
+            s.AddMassTransitServices(Configuration, assemblies: typeof(Startup).Assembly);
 
             s.AddApplication(Configuration);
 
@@ -64,6 +71,7 @@ namespace MiniService
         {
             if (env.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger(c => c.RouteTemplate = "docs/{documentName}/spec.json");
                 app.UseSwaggerUI(c =>
                 {
