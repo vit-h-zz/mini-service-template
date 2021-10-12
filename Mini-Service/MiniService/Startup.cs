@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System.Text.RegularExpressions;
 using Common.Service;
+using Common.Service.Options;
 #if AddGrpc
 using Common.Service.Grpc;
 #endif
@@ -55,7 +56,7 @@ namespace MiniService
             s.AddControllers(o => o.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseRouteTransformer())))
                 .AddControllersAsServices();
 
-            s.AddMassTransitServices(Configuration, assemblies: typeof(Startup).Assembly);
+            s.AddMassTransitServices(Configuration.GetOptions<MassTransitOptions>(), typeof(Startup).Assembly);
 
             s.AddApplication(Configuration);
 
