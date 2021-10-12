@@ -11,9 +11,9 @@ namespace MiniService.Application.TodoItems.Delete
 {
     public class DeleteTodoItemHandler : IRequestHandler<DeleteTodoItemCommand, Result>
     {
-        private readonly MiniServiceDbContext _db;
+        private readonly AppContext _db;
 
-        public DeleteTodoItemHandler(MiniServiceDbContext db)
+        public DeleteTodoItemHandler(AppContext db)
         {
             _db = db;
         }

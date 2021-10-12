@@ -11,14 +11,14 @@ namespace MiniService.Data
         {
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
-                services.AddDbContext<MiniServiceDbContext>(options =>
+                services.AddDbContext<AppContext>(options =>
                     options.UseInMemoryDatabase("MiniServiceDb"));
             }
             else
             {
-                services.AddDbContext<MiniServiceDbContext>(options =>
+                services.AddDbContext<AppContext>(options =>
                     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")
-                        , b => b.MigrationsAssembly(typeof(MiniServiceDbContext).Assembly.FullName)
+                        //, b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)
                     ));
             }
 

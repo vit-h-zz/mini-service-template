@@ -15,11 +15,11 @@ namespace MiniService.Application.TodoItems.Complete
 {
     public class CompleteTodoItemHandler : IRequestHandler<CompleteTodoItemCommand, Result<CompleteTodoItemResult>>
     {
-        private readonly MiniServiceDbContext _db;
+        private readonly AppContext _db;
         private readonly IPublishEndpoint _publisher;
         private readonly IClock _clock;
 
-        public CompleteTodoItemHandler(MiniServiceDbContext db,
+        public CompleteTodoItemHandler(AppContext db,
             IPublishEndpoint publisher, IClock clock)
         {
             _db = db;

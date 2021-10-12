@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace MiniService.Data.Persistence
 {
-    public sealed partial class MiniServiceDbContext : DbContext
+    public sealed partial class AppContext : DbContext
     {
         public const int DecimalPrecision = 28;
         public const int DecimalScale = 15;
         private readonly string _decimalColumn = $"decimal({DecimalPrecision}, {DecimalScale})";
 
-        public MiniServiceDbContext(DbContextOptions<MiniServiceDbContext> options) : base(options)
+        public AppContext(DbContextOptions<AppContext> options) : base(options)
         {
             ChangeTracker.CascadeDeleteTiming = CascadeTiming.OnSaveChanges;
             ChangeTracker.DeleteOrphansTiming = CascadeTiming.OnSaveChanges;
@@ -35,7 +35,7 @@ namespace MiniService.Data.Persistence
 
         private void HandleAdded()
         {
-            var added = ChangeTracker.Entries<AuditableEntity>().Where(e => e.State == EntityState.Added);
+            var added = ChangeTracker.Entries<IAuditableEntity>().Where(e => e.State == EntityState.Added);
 
             foreach (var entry in added)
             {
@@ -49,7 +49,7 @@ namespace MiniService.Data.Persistence
 
         private void HandleModified()
         {
-            var modified = ChangeTracker.Entries<AuditableEntity>().Where(e => e.State == EntityState.Modified);
+            var modified = ChangeTracker.Entries<IAuditableEntity>().Where(e => e.State == EntityState.Modified);
 
             foreach (var entry in modified)
             {

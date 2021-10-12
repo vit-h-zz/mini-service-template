@@ -19,7 +19,7 @@ namespace MiniService
 {
     public class Startup
     {
-        const string ServiceName = nameof(MiniService);
+        private const string ServiceName = nameof(MiniService);
 
         public Startup(IConfiguration configuration)
         {
@@ -29,7 +29,6 @@ namespace MiniService
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        // ReSharper disable once IdentifierTypo
         public void ConfigureServices(IServiceCollection s)
         {
             //s.AddHostedService<BackgroundWorker>();
@@ -64,7 +63,7 @@ namespace MiniService
                 s.AddDbContextToDI(Configuration);
 
             if (!Configuration.IsTrue("HealthCheckz:Disable"))
-                s.AddHealthChecksServices<MiniServiceDbContext>();
+                s.AddHealthChecksServices<AppContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

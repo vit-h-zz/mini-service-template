@@ -13,10 +13,10 @@ namespace MiniService.Application.TodoItems.Create
 {
     public class CreateTodoItemHandler : IRequestHandler<CreateTodoItemCommand, Result<TodoItem>>
     {
-        private readonly MiniServiceDbContext _db;
+        private readonly AppContext _db;
         private readonly IPublishEndpoint _publisher;
 
-        public CreateTodoItemHandler(MiniServiceDbContext db,
+        public CreateTodoItemHandler(AppContext db,
             IPublishEndpoint publisher)
         {
             _db = db;

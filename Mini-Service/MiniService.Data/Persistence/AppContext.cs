@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MiniService.Data.Persistence
 {
-    public partial class MiniServiceDbContext
+    public partial class AppContext
     {
         public DbSet<TodoItem> TodoItems { get; set; } = default!;
     }

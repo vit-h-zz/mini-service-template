@@ -15,7 +15,7 @@ namespace MiniService.Tests.Helpers
                 .Customize(new AutoMoqCustomization())
                 .RegisterFakers<AutoMoqWithInMemoryDbAttribute>();
 
-            fixture.Inject(new MiniServiceDbContext(new DbContextOptionsBuilder<MiniServiceDbContext>()
+            fixture.Inject(new AppContext(new DbContextOptionsBuilder<AppContext>()
                     .UseInMemoryDatabase("MiniServiceDbContext").Options));
 
             return fixture;
