@@ -7,12 +7,16 @@ using MiniService.Application.TodoItems.Complete;
 
 namespace MiniService.Features.Todos
 {
-    public class TodosConsumer
-        : IConsumer<CompleteTodoItemCmd>
+    /// <summary>
+    /// Consumer for CompleteTodoItemCmd
+    /// </summary>
+    // More info regarding routing (https://www.youtube.com/watch?v=bsUlQ93j2MY)
+    // and retry policies (https://www.youtube.com/watch?v=pKxf6Ii-3ow)
+    public class CompleteTodoItemConsumer : IConsumer<CompleteTodoItemCmd>
     {
         private readonly IMediator _mediator;
 
-        public TodosConsumer(IMediator mediator)
+        public CompleteTodoItemConsumer(IMediator mediator)
         {
             _mediator = mediator;
         }

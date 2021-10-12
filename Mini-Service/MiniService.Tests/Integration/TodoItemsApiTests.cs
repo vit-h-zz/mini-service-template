@@ -78,7 +78,7 @@ namespace MiniService.Tests.Integration
             _dbContext.Entry(item2).Reload();
             item2.Done.Should().BeFalse();
 
-            var consumerHarness = _scope.ServiceProvider.GetRequiredService<IConsumerTestHarness<TodosConsumer>>();
+            var consumerHarness = _scope.ServiceProvider.GetRequiredService<IConsumerTestHarness<CompleteTodoItemConsumer>>();
             consumerHarness.Consumed.Select<CompleteTodoItemCmd>().Should().HaveCount(1);
             _harness.Published.Select<WorkDone>().Should().HaveCount(1);
         }
