@@ -32,7 +32,7 @@ namespace MiniService.Tests.Integration
         private const string ToDoUrl = "api/Todos";
         private readonly CustomWebApplicationFactory<Startup> _factory;
         private readonly InMemoryTestHarness _harness;
-        private readonly Data.Persistence.AppContext _dbContext;
+        private readonly Data.Persistence.AppDbContext _dbContext;
         private readonly IServiceScope _scope;
         private readonly HttpClient _client;
 
@@ -42,7 +42,7 @@ namespace MiniService.Tests.Integration
             _client = _factory.CreateClient();
 
             _scope = _factory.Services.CreateScope();
-            _dbContext = _scope.ServiceProvider.GetRequiredService<Data.Persistence.AppContext>();
+            _dbContext = _scope.ServiceProvider.GetRequiredService<Data.Persistence.AppDbContext>();
 
             _harness = _factory.Services.GetRequiredService<InMemoryTestHarness>();
             _harness.SetupMassTransitTestHarnessMiddleware(_factory.Services);

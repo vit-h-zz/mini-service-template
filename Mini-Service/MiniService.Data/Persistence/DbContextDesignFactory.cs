@@ -6,13 +6,17 @@ using Microsoft.Extensions.Configuration;
 
 namespace MiniService.Data.Persistence
 {
+    /// <summary>
+    /// Helper to create DbContext when creating/applying migrations
+    /// since 'MiniService.Data.csproj' is 'Library' and not an executable.
+    /// </summary>
     // more info https://docs.microsoft.com/en-us/ef/core/cli/dbcontext-creation
-    public class DbContextDesignFactory : IDesignTimeDbContextFactory<AppContext>
+    public class DbContextDesignFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         private const string connectionStringPath = "ConnectionStrings:DefaultConnection";
         private const string relativePathToConfig = @"..\MiniService\appsettings.json";
 
-        public AppContext CreateDbContext(string[] args)
+        public AppDbContext CreateDbContext(string[] args)
         {
             // dotnet ef database update -- FirstAppArg "second argument" ThirdAppArg
             // Console.WriteLine($"args: {string.Join("; ", args)}");
@@ -26,11 +30,11 @@ namespace MiniService.Data.Persistence
 
             Console.WriteLine($"{connectionStringPath}: '{connectionString}'");
 
-            var options = new DbContextOptionsBuilder<AppContext>();
+            var options = new DbContextOptionsBuilder<AppDbContext>();
             options.UseNpgsql(connectionString);
             //options.UseSqlServer(connectionString);
 
-            return new AppContext(options.Options);
+            return new AppDbContext(options.Options);
         }
     }
 }

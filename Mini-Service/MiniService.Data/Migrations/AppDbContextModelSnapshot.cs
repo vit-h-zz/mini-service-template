@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace MiniService.Data.Migrations
 {
-    [DbContext(typeof(Persistence.AppContext))]
+    [DbContext(typeof(Persistence.AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

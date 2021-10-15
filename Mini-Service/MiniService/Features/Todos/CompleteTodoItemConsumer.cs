@@ -10,6 +10,7 @@ namespace MiniService.Features.Todos
     /// <summary>
     /// Consumer for CompleteTodoItemCmd
     /// </summary>
+    // One consumer = one queue
     // More info regarding routing (https://www.youtube.com/watch?v=bsUlQ93j2MY)
     // and retry policies (https://www.youtube.com/watch?v=pKxf6Ii-3ow)
     public class CompleteTodoItemConsumer : IConsumer<CompleteTodoItemCmd>

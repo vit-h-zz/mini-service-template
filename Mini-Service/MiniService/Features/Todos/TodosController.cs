@@ -30,10 +30,9 @@ namespace MiniService.Features.Todos
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Update([FromRoute] int id, [FromBody] UpdateTodoItemCommand command, CancellationToken ct)
         {
-            if (id != command.Id)
-                return BadRequest();
-
-            return await Send(command, ct).ToActionResult(this);
+            return id == command.Id
+                ? await Send(command, ct).ToActionResult(this)
+                : BadRequest();
         }
 
         [HttpDelete("{id:int}")]

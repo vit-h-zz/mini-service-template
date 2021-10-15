@@ -12,6 +12,7 @@ using Common.Service;
 using Common.Service.Options;
 #if AddGrpc
 using Common.Service.Grpc;
+using MiniService.Features.Todos;
 #endif
 using MiniService.Application;
 
@@ -63,7 +64,7 @@ namespace MiniService
                 s.AddDbContextToDI(Configuration);
 
             if (!Configuration.IsTrue("HealthCheckz:Disable"))
-                s.AddHealthChecksServices<AppContext>();
+                s.AddHealthChecksServices<AppDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

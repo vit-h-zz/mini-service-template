@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace MiniService.Data.Persistence
 {
-    public sealed partial class AppContext : DbContext
+    public sealed partial class AppDbContext : DbContext
     {
         public const int DecimalPrecision = 28;
         public const int DecimalScale = 15;
         private readonly string _decimalColumn = $"decimal({DecimalPrecision}, {DecimalScale})";
 
-        public AppContext(DbContextOptions<AppContext> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
             ChangeTracker.CascadeDeleteTiming = CascadeTiming.OnSaveChanges;
             ChangeTracker.DeleteOrphansTiming = CascadeTiming.OnSaveChanges;
@@ -66,7 +66,7 @@ namespace MiniService.Data.Persistence
             var validatableModels = ChangeTracker.Entries<IValidatableModel>();
 
             foreach (var model in validatableModels)
-                model.Entity.ValidateAndThrow();
+                model.Entity.ValidateAndThrow(); // TODO: Send error in the common format
         }
 
         private void HandleVersioned()

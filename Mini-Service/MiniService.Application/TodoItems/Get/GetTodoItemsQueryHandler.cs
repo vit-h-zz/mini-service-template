@@ -12,9 +12,9 @@ namespace MiniService.Application.TodoItems.Get
 {
     public class GetTodoItemsQueryHandler : IRequestHandler<GetTodoItemsQuery, Result<List<TodoItem>>>
     {
-        private readonly AppContext _db;
+        private readonly AppDbContext _db;
 
-        public GetTodoItemsQueryHandler(AppContext db)
+        public GetTodoItemsQueryHandler(AppDbContext db)
         {
             _db = db;
         }

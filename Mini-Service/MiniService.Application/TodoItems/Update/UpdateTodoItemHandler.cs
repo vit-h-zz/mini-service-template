@@ -15,10 +15,10 @@ namespace MiniService.Application.TodoItems.Update
 {
     public class UpdateTodoItemHandler : IRequestHandler<UpdateTodoItemCommand, Result>
     {
-        private readonly AppContext _db;
+        private readonly AppDbContext _db;
         private readonly IPublishEndpoint _publisher;
 
-        public UpdateTodoItemHandler(AppContext db,
+        public UpdateTodoItemHandler(AppDbContext db,
             IPublishEndpoint publisher)
         {
             _db = db;

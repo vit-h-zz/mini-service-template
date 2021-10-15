@@ -12,9 +12,9 @@ namespace MiniService.Application.TodoItems.GetFinishedWork
 {
     public class GetFinishedWorkHandler : IRequestHandler<GetFinishedWorkQuery, Result<List<WorkItem>>>
     {
-        private readonly AppContext _db;
+        private readonly AppDbContext _db;
 
-        public GetFinishedWorkHandler(AppContext db)
+        public GetFinishedWorkHandler(AppDbContext db)
         {
             _db = db;
         }
