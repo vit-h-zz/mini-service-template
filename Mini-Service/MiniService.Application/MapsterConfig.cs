@@ -1,8 +1,8 @@
-using Mapster;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
+using Mapster;
 
-namespace MiniService.Application.Core
+namespace MiniService.Application
 {
     public static class MapsterConfig
     {

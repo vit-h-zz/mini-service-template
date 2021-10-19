@@ -66,6 +66,15 @@ namespace MiniService
             return services;
         }
 
+        public static IServiceCollection AddBackgroundWorker(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<BackgroundWorkerOptions>(c => c.MaxStoppingDelayMs = 100_000);
+            services.AddSingleton<BackgroundWorker>();
+            services.AddHostedService(sp => sp.GetRequiredService<BackgroundWorker>());
+
+            return services;
+        }
+
         public static bool IsTrue(this IConfiguration configuration, string key) => configuration.GetValue<bool?>(key) == true;
     }
 }

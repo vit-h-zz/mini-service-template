@@ -11,7 +11,7 @@ namespace MiniService.Application
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
-            services.AddMediatrPipeline(typeof(DependencyInjection).Assembly);
+            services.AddMediatrPipeline(configuration, typeof(DependencyInjection).Assembly);
 
             if (!configuration.IsTrue("MassTransit:Disable"))
                 services.AddMassTransitClient();

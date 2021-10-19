@@ -8,9 +8,9 @@ using MiniService.Tests.Helpers;
 using Moq;
 using Xunit;
 
-namespace MiniService.Tests.Features.Todo.Add
+namespace MiniService.Tests.Unit.Todo
 {
-    public class CreateTodoItem
+    public class PublishingChecks
     {
         [Theory, AutoMoqWithInMemoryDb]
         public async Task ShouldPublishOnCreate([Frozen] Mock<IPublishEndpoint> publisher, CreateTodoItemHandler handler, CreateTodoItemCommand command)

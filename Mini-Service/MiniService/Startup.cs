@@ -5,11 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MiniService.Data.Persistence;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using System.Text.RegularExpressions;
 using Common.Service;
-using Common.Service.Options;
 #if AddGrpc
 using Common.Service.Grpc;
 using MiniService.Features.Todos;
@@ -29,42 +25,35 @@ namespace MiniService
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection s)
+        public void ConfigureServices(IServiceCollection services)
         {
-            //s.AddHostedService<BackgroundWorker>();
-            //s.AddSingleton<IBackgroundTaskQueue<Func<CancellationToken, ValueTask>>>(ctx =>
-            //{
-            //    if (!int.TryParse(Configuration["QueueCapacity"], out var queueCapacity))
-            //        queueCapacity = 100;
-            //    return new BackgroundTaskQueue<Func<CancellationToken, ValueTask>>(queueCapacity);
-            //});
+            services.AddServiceCore();
 
-            s.AddServiceCore();
+            services.AddWebApi();
 
-            s.AddTelemetry(Configuration, ServiceName);
+            services.AddMassTransitServices(Configuration, typeof(Startup).Assembly);
 
 #if AddGrpc
-            s.AddGrpc(o =>
+            services.AddGrpc(o =>
             {
                 o.Interceptors.Add<ClientCancelledInterceptor>();
+                o.Interceptors.Add<UserContextInterceptor>();
             });
 
-            s.AddGrpcServices(Configuration);
+            services.AddGrpcServices(Configuration);
 #endif
-            s.AddSwaggerGen(o => o.DescribeAllParametersInCamelCase());
-            s.AddControllers(o => o.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseRouteTransformer())))
-                .AddControllersAsServices();
 
-            s.AddMassTransitServices(Configuration.GetOptions<MassTransitOptions>(), typeof(Startup).Assembly);
+            services.AddBackgroundWorker(Configuration);
 
-            s.AddApplication(Configuration);
+            services.AddTelemetry(Configuration, ServiceName);
+
+            services.AddApplication(Configuration);
 
             if (!Configuration.IsTrue("EF:Disable"))
-                s.AddDbContextToDI(Configuration);
+                services.AddDbContextToDI(Configuration);
 
             if (!Configuration.IsTrue("HealthCheckz:Disable"))
-                s.AddHealthChecksServices<AppDbContext>();
+                services.AddHealthChecksServices<AppDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,10 +89,5 @@ namespace MiniService
                     endpoints.MapHealthChecksEndpoints();
             });
         }
-    }
-
-    public class KebabCaseRouteTransformer : IOutboundParameterTransformer
-    {
-        public string? TransformOutbound(object? value) => value == null ? null : Regex.Replace(value.ToString()!, "([a-z])([A-Z])", "$1-$2").ToLower();
     }
 }

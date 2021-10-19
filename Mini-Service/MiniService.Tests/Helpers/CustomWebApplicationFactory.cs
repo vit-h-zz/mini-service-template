@@ -40,7 +40,7 @@ namespace MiniService.Tests.Helpers
                 //If full startup is too slow. We may need to create a custom startup that is similar/derived from full app startup
 
                 var guid = Guid.NewGuid().ToString();
-                services.AddDbContext<Data.Persistence.AppDbContext>(x => { x.UseInMemoryDatabase(guid); });
+                services.AddDbContext<AppDbContext>(x => { x.UseInMemoryDatabase(guid); });
 
                 services.Remove(services.Single(d => d.ServiceType == typeof(IClock)));
                 ClockMock = new Mock<IClock>();
@@ -58,6 +58,7 @@ namespace MiniService.Tests.Helpers
                     var consumerAssembly = typeof(TStartup).Assembly;
                     cfg.AddConsumers(consumerAssembly);
                     cfg.AddConsumerTestHarnesses(consumerAssembly);
+                    //cfg.AddTransactionalBus();
                 });
 
                 services.AddSingleton<IBusControl>(sp => sp.GetRequiredService<BusTestHarness>().BusControl);
