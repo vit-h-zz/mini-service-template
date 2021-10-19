@@ -102,7 +102,7 @@ namespace MiniService
             {
                 await task;
             }
-            catch (TaskCanceledException ex)
+            catch (TaskCanceledException)
             {
                 // Ignore
             }

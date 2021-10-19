@@ -1,4 +1,4 @@
-using MassTransit.Registration;
+﻿using MassTransit.Registration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -8,24 +8,9 @@ namespace MiniService.Tests.Helpers
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public MassTransitPassthroughInstanceProvider(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-
-        public object? GetService(Type serviceType)
-        {
-            return _serviceProvider.GetService(serviceType);
-        }
-
-        public T GetRequiredService<T>() where T : class
-        {
-            return _serviceProvider.GetRequiredService<T>();
-        }
-
-        public T GetService<T>() where T : class
-        {
-            return _serviceProvider.GetService<T>()!;
-        }
+        public MassTransitPassthroughInstanceProvider(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
+        public object? GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
+        public T GetRequiredService<T>() where T : class => _serviceProvider.GetRequiredService<T>();
+        public T GetService<T>() where T : class => _serviceProvider.GetService<T>()!;
     }
 }

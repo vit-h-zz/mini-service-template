@@ -1,4 +1,4 @@
-using MassTransit;
+﻿using MassTransit;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
 using MassTransit.Testing;
 using System;
@@ -25,6 +25,14 @@ namespace MiniService.Tests.Helpers
                 var method = genericMethod.MakeGenericMethod(consumerType);
                 method.Invoke(obj: null, parameters: new object?[] { cfg });
             }
+        }
+
+        public static void AddMassTransitTestMiddleware(this InMemoryTestHarness inMemoryTestHarness, IServiceProvider serviceProvider)
+        {
+            inMemoryTestHarness.OnConfigureInMemoryBus += o =>
+            {
+                o.UseConsumeFilter(typeof(ConsumeFilterMock<>), new MassTransitPassthroughInstanceProvider(serviceProvider));
+            };
         }
     }
 }

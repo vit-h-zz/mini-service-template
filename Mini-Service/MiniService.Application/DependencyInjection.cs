@@ -1,5 +1,4 @@
-﻿using Common;
-using Common.Application;
+﻿using Common.Application;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

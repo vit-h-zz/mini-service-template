@@ -1,6 +1,4 @@
-﻿using System;
-using Messaging.MiniService.Enums;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace MiniService.Application.TodoItems.Complete
 {

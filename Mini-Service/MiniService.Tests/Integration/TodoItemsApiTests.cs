@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Common.Extensions;
-using Common.Tests;
 using Messaging.MiniService;
 using Messaging.MiniService.Enums;
 using MiniService.Application.TodoItems.GetFinishedWork;
@@ -24,6 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using MiniService.Application.TodoItems.Create;
 using MiniService.Application.TodoItems.Update;
+using Common.Tests;
 
 namespace MiniService.Tests.Integration
 {
@@ -45,8 +44,7 @@ namespace MiniService.Tests.Integration
             _dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             _harness = _factory.Services.GetRequiredService<InMemoryTestHarness>();
-            _harness.SetupMassTransitTestHarnessMiddleware(_factory.Services);
-            //_harness.SetupMassTransitTestHarnessErrorMiddleware();
+            _harness.AddMassTransitTestMiddleware(_factory.Services);
 
             _harness.Start();
         }
@@ -72,10 +70,10 @@ namespace MiniService.Tests.Integration
             // assert
             response.Message.ClosingTime.Should().Be(closingTime.ToDateTimeOffset());
 
-            _dbContext.Entry(item1).Reload();
+            await _dbContext.Entry(item1).ReloadAsync();
             item1.Done.Should().BeTrue();
 
-            _dbContext.Entry(item2).Reload();
+            await _dbContext.Entry(item2).ReloadAsync();
             item2.Done.Should().BeFalse();
 
             var consumerHarness = _scope.ServiceProvider.GetRequiredService<IConsumerTestHarness<CompleteTodoItemConsumer>>();
@@ -91,12 +89,9 @@ namespace MiniService.Tests.Integration
             await _dbContext.SaveChangesAsync();
 
             // act
-            var apiResponse = await _client.GetAsync(ToDoUrl);
+            var items = await _client.Get<List<TodoItem>>(ToDoUrl);
 
             // assert
-            await apiResponse.IsSucceed();
-
-            var items = await apiResponse.Content.ReadFromJsonAsync<List<TodoItem>>();
             items.Should().NotBeNull();
             items.Should().HaveCount(2);
         }
@@ -106,16 +101,12 @@ namespace MiniService.Tests.Integration
         {
             //act
             var cmd = itemNewFaker.Generate().Adapt<CreateTodoItemCommand>();
-            var apiResponse = await _client.PostAsJsonAsync(ToDoUrl, cmd);
+            var toDoItem = await _client.Post<TodoItem>(ToDoUrl, cmd, HttpStatusCode.Created);
 
             // assert
-            await apiResponse.IsSucceed();
-            apiResponse = await _client.GetAsync(ToDoUrl);
-            apiResponse.IsSuccessStatusCode.Should().BeTrue();
-            var toDoItems = await apiResponse.Content.ReadFromJsonAsync<List<TodoItem>>();
-
-            toDoItems.Should().NotBeNull();
-            toDoItems.Should().HaveCount(1);
+            var todoItems = _dbContext.TodoItems.ToList();
+            todoItems.Should().HaveCount(1);
+            todoItems.First().Should().BeEquivalentTo(toDoItem);
         }
 
         [Theory, AutoMoqData]
@@ -124,28 +115,25 @@ namespace MiniService.Tests.Integration
             //arrange
             var t1 = existingFaker.Generate();
             var t2 = existingFaker.Generate();
-            _dbContext.Add(t1);
-            _dbContext.Add(t2);
+            _dbContext.TodoItems.AddRange(t1, t2);
             await _dbContext.SaveChangesAsync();
 
             var cmd = t1.Adapt<UpdateTodoItemCommand>();
             cmd.Title = "Test Title";
             cmd.Priority = PriorityLevel.Medium;
 
-            var t2inDb = t2.Adapt<TodoItem>();
+            var t2InDb = t2.Adapt<TodoItem>();
 
             //act
-            var apiResponse = await _client.PutAsJsonAsync($"{ToDoUrl}/{t1.Id}", cmd);
+            await _client.Put($"{ToDoUrl}/{t1.Id}", cmd);
 
             //assert
-            await apiResponse.IsSucceed();
-
-            _dbContext.Entry(t1).Reload();
+            await _dbContext.Entry(t1).ReloadAsync();
             t1.Title.Should().Be(cmd.Title);
             t1.Priority.Should().Be(cmd.Priority);
 
-            _dbContext.Entry(t2).Reload();
-            t2inDb.Should().BeEquivalentTo(t2);
+            await _dbContext.Entry(t2).ReloadAsync();
+            t2InDb.Should().BeEquivalentTo(t2);
         }
 
         [Theory, AutoMoqData]
@@ -162,15 +150,13 @@ namespace MiniService.Tests.Integration
             cmd1.Title = "Test Title 1";
             cmd2.Title = "Test Title 2";
 
-            var apiResponse = await _client.PutAsJsonAsync($"{ToDoUrl}/{t1.Id}", cmd1);
-            apiResponse.IsSuccessStatusCode.Should().BeTrue(await apiResponse.Content.ReadAsStringAsync());
+            await _client.Put($"{ToDoUrl}/{t1.Id}", cmd1);
 
             //act
-            apiResponse = await _client.PutAsJsonAsync($"{ToDoUrl}/{t1.Id}", cmd2);
+            await _client.Put($"{ToDoUrl}/{t1.Id}", cmd2, HttpStatusCode.InternalServerError);
 
             //assert
-            apiResponse.StatusCode.Should().Be(HttpStatusCode.InternalServerError); // Need to handle concurrency exception properly
-            _dbContext.Entry(t1).Reload();
+            await _dbContext.Entry(t1).ReloadAsync();
             t1.Title.Should().Be(cmd1.Title);
         }
 
@@ -181,17 +167,13 @@ namespace MiniService.Tests.Integration
             var td1 = existingFaker.Generate();
             var td2 = existingFaker.Generate();
             var td3 = doneFaker.Generate();
-            _dbContext.Add(td1);
-            _dbContext.Add(td2);
-            _dbContext.Add(td3);
+            _dbContext.TodoItems.AddRange(td1, td2, td3);
             await _dbContext.SaveChangesAsync();
 
             // act
-            var apiResponse = await _client.DeleteAsync(ToDoUrl + $"/{td1.Id}");
+            await _client.Delete(ToDoUrl + $"/{td1.Id}");
 
             // assert
-            await apiResponse.IsSucceed();
-
             var todItems = _dbContext.TodoItems.ToList();
             todItems.Should().HaveCount(2);
             todItems.Should().Contain(new[] { td2, td3 });
@@ -201,19 +183,16 @@ namespace MiniService.Tests.Integration
         public async Task GetFinishedWork(ToDoItemExistingFaker existingFaker, ToDoItemDoneFaker doneFaker)
         {
             //arrange
-            _dbContext.Add(existingFaker.Generate());
-            _dbContext.Add(doneFaker.Generate());
+            var existing = existingFaker.Generate();
+            _dbContext.TodoItems.AddRange(existing, doneFaker.Generate());
             await _dbContext.SaveChangesAsync();
 
             //act
-            var apiResponse = await _client.GetAsync(ToDoUrl + "/finished".CamelToSentenceCase());
+            var items = await _client.Get<List<WorkItem>>(ToDoUrl + "/finished");
 
             // assert
-            await apiResponse.IsSucceed();
-
-            var items = await apiResponse.Content.ReadFromJsonAsync<List<WorkItem>>();
             items.Should().NotBeNull();
-            items.Should().HaveCount(2);
+            items.Should().NotContain(x => x.TodoId == existing.Id);
         }
 
         public async ValueTask DisposeAsync()

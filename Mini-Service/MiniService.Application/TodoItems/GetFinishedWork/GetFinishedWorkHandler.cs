@@ -22,6 +22,7 @@ namespace MiniService.Application.TodoItems.GetFinishedWork
         public async Task<Result<List<WorkItem>>> Handle(GetFinishedWorkQuery r, CancellationToken ct)
         {
             return Result.Ok(await _db.TodoItems
+                .Where(x => x.Done)
                 .OrderBy(x => x.Priority)
                 .ProjectToType<WorkItem>()
                 .ToListAsync(ct));

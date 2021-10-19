@@ -19,10 +19,9 @@ namespace MiniService
             where TDbContext : DbContext
         {
             services.AddHealthChecks()
-                .AddDbContextCheck<TDbContext>(tags: new[] {ReadyTag})
-                .AddCheck("My custom always healthy check", () => HealthCheckResult.Healthy(), tags: new[] {ReadyTag})
+                .AddDbContextCheck<TDbContext>(tags: new[] { ReadyTag })
+                .AddCheck("My custom always healthy check", () => HealthCheckResult.Healthy(), tags: new[] { ReadyTag })
                 .AddCheck("Some leave check", () => HealthCheckResult.Healthy("Cache is healthy!"));
-                //.AddCheck("Security Vault", () => /*call security vault*/);
 
             // Install more checks if needed "AspNetCore.HealthChecks...."
             //.AddCheck<MyCustomCheck>("My Custom Check")

@@ -25,12 +25,11 @@ namespace MiniService.Tests.Helpers
             {
                 InitialData = new Dictionary<string, string>
                 {
-                    { "EF:Disable", "true" },
-                    { "MassTransit:Enable", "false" },
-                    { "HealthCheckz:Disable", "true" }
+                    {"EF:Disable", "true"},
+                    {"MassTransit:Enable", "false"},
+                    {"HealthCheckz:Disable", "true"}
                 }
-            })
-            );
+            }));
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -71,19 +70,6 @@ namespace MiniService.Tests.Helpers
 
                 //if there are limitations to testharness, it is possible to use inmemory transport, see masstransit's own test suite
             });
-        }
-    }
-
-    public static class SetupExtensions
-    {
-        public static void SetupMassTransitTestHarnessMiddleware(this InMemoryTestHarness inMemoryTestHarness, IServiceProvider serviceProvider)
-        {
-            // Error middleware can't be added typically thru DI setup with test harness
-            var instanceProvider = new MassTransitPassthroughInstanceProvider(serviceProvider);
-            inMemoryTestHarness.OnConfigureInMemoryBus += o =>
-            {
-                o.UseConsumeFilter(typeof(ConsumeFilterMock<>), instanceProvider);
-            };
         }
     }
 }

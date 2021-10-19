@@ -2,7 +2,6 @@
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
 using Common.Tests;
-using FluentAssertions.Common;
 
 namespace MiniService.Tests.Helpers
 {
