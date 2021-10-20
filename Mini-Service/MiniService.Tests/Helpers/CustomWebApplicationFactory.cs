@@ -9,7 +9,8 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using MiniService.Data.Persistence;
-using System.Linq;
+using Common.Application.Abstractions;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using NodaTime;
 
@@ -17,7 +18,8 @@ namespace MiniService.Tests.Helpers
 {
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
-        public Mock<IClock> ClockMock { get; private set; } = null!;
+        public Mock<IClock> ClockMock { get; } = new();
+        public string TestUserId { get; } = Guid.NewGuid().ToString();
 
         protected override IHostBuilder CreateHostBuilder() => base
             .CreateHostBuilder()
@@ -25,25 +27,30 @@ namespace MiniService.Tests.Helpers
             {
                 InitialData = new Dictionary<string, string>
                 {
-                    {"EF:Disable", "true"},
+                    {"Database:Enable", "false"},
+                    //{"Database:UseInMemory", "true"},
+                    //{"Database:DetailedErrors", "true"},
+                    {"Database:HealthChecks:Enable", "false"},
                     {"MassTransit:Enable", "false"},
-                    {"HealthCheckz:Disable", "true"}
+                    {"AppHealthChecks:Enable", "false"}
                 }
             }));
 
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
-        {
-            //configure app after TStartup class
+        protected override void ConfigureWebHost(IWebHostBuilder builder) =>
+            // Configure app after TStartup class
+            // May consider to creating a custom startup to speedup tests setup
             builder.ConfigureServices(services =>
             {
-                //If full startup is too slow. We may need to create a custom startup that is similar/derived from full app startup
-
                 var guid = Guid.NewGuid().ToString();
-                services.AddDbContext<AppDbContext>(x => { x.UseInMemoryDatabase(guid); });
+                services.AddDbContext<AppDbContext>(b =>
+                {
+                    b.UseInMemoryDatabase("MiniServiceTestDb_" + guid);
+                    b.EnableDetailedErrors();
+                    b.EnableSensitiveDataLogging();
+                });
 
-                services.Remove(services.Single(d => d.ServiceType == typeof(IClock)));
-                ClockMock = new Mock<IClock>();
-                services.AddSingleton(ClockMock.Object);
+                services.Replace(ServiceDescriptor.Scoped<IUserContext>(_ => new TestUserContext(TestUserId)));
+                services.Replace(ServiceDescriptor.Singleton(_ => ClockMock.Object));
 
                 // Register MassTransit consumers
                 services.Scan(scan => scan
@@ -52,6 +59,7 @@ namespace MiniService.Tests.Helpers
                     .AsSelf()
                     .WithScopedLifetime());
 
+                //Inmemory transport may be used in case of TestHarness limitations
                 services.AddMassTransitInMemoryTestHarness(cfg =>
                 {
                     var consumerAssembly = typeof(TStartup).Assembly;
@@ -67,9 +75,6 @@ namespace MiniService.Tests.Helpers
                 services.AddSingleton<ISendEndpointProvider>(provider => provider.GetRequiredService<IBusControl>());
 
                 //var sp = services.BuildServiceProvider(true);
-
-                //if there are limitations to testharness, it is possible to use inmemory transport, see masstransit's own test suite
             });
-        }
     }
 }

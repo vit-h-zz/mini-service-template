@@ -1,4 +1,5 @@
-﻿using MiniService.Data;
+﻿using System.Reflection;
+using MiniService.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -6,54 +7,35 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MiniService.Data.Persistence;
 using Common.Service;
+using MiniService.Application;
 #if AddGrpc
-using Common.Service.Grpc;
 using MiniService.Features.Todos;
 #endif
-using MiniService.Application;
 
 namespace MiniService
 {
     public class Startup
     {
         private const string ServiceName = nameof(MiniService);
+        private readonly Assembly _currentAssembly = typeof(Startup).Assembly;
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddServiceCore();
-
             services.AddWebApi();
-
-            services.AddMassTransitServices(Configuration, typeof(Startup).Assembly);
-
+            services.AddMassTransitServices(Configuration, _currentAssembly);
 #if AddGrpc
-            services.AddGrpc(o =>
-            {
-                o.Interceptors.Add<ClientCancelledInterceptor>();
-                o.Interceptors.Add<UserContextInterceptor>();
-            });
-
-            services.AddGrpcServices(Configuration);
+            services.AddGrpcServices(Configuration, currentAssembly);
 #endif
-
             services.AddBackgroundWorker(Configuration);
-
             services.AddTelemetry(Configuration, ServiceName);
-
             services.AddApplication(Configuration);
-
-            if (!Configuration.IsTrue("EF:Disable"))
-                services.AddDbContextToDI(Configuration);
-
-            if (!Configuration.IsTrue("HealthCheckz:Disable"))
-                services.AddHealthChecksServices<AppDbContext>();
+            services.AddDatabase(Configuration);
+            services.AddHealthChecksServices(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,9 +52,7 @@ namespace MiniService
                 });
             }
 
-            if (!Configuration.IsTrue("HealthCheckz:Disable"))
-                app.UseServiceHealthChecks();
-
+            app.UseServiceHealthChecks();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
@@ -84,9 +64,7 @@ namespace MiniService
                 endpoints.MapGrpcService<TodosService>();
 #endif
                 endpoints.MapControllers();
-
-                if (!Configuration.IsTrue("HealthCheckz:Disable"))
-                    endpoints.MapHealthChecksEndpoints();
+                endpoints.MapHealthChecksEndpoints();
             });
         }
     }

@@ -1,12 +1,12 @@
-﻿using Common.Service;
+﻿using System.Reflection;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Common.Service.Grpc;
 
 namespace MiniService
 {
@@ -14,14 +14,17 @@ namespace MiniService
     {
         private const string ReadyTag = "ready";
         private const string LiveTag = "live";
+        private static AppHealthChecksOptions? _healthOptions = null!;
 
-        public static void AddHealthChecksServices<TDbContext>(this IServiceCollection services)
-            where TDbContext : DbContext
+        public static IServiceCollection AddHealthChecksServices(this IServiceCollection services, IConfiguration configuration)
         {
+            _healthOptions = configuration.GetSection(AppHealthChecksOptions.SectionName).Get<AppHealthChecksOptions>();
+
+            if (_healthOptions == null || !_healthOptions.Enable)
+                return services;
+
             services.AddHealthChecks()
-                .AddDbContextCheck<TDbContext>(tags: new[] { ReadyTag })
-                .AddCheck("My custom always healthy check", () => HealthCheckResult.Healthy(), tags: new[] { ReadyTag })
-                .AddCheck("Some leave check", () => HealthCheckResult.Healthy("Cache is healthy!"));
+                .AddCheck("My custom always healthy check", () => HealthCheckResult.Healthy(), tags: new[] { ReadyTag });
 
             // Install more checks if needed "AspNetCore.HealthChecks...."
             //.AddCheck<MyCustomCheck>("My Custom Check")
@@ -32,23 +35,35 @@ namespace MiniService
             //.AddWindowsServiceHealthCheck("someservice", s => s.Status == ServiceControllerStatus.Running) // check if a windows service is running
             //.AddUrlGroup(new Uri("https://localhost:44318/weatherforecast"), "Example endpoint"); // should return status code 200
 
+            if (!_healthOptions.EnableUi)
+                return services;
+
             services
                 .AddHealthChecksUI()
                 .AddInMemoryStorage();
+
+            return services;
         }
 
-        public static void UseServiceHealthChecks(this IApplicationBuilder app)
+        public static IApplicationBuilder UseServiceHealthChecks(this IApplicationBuilder app)
         {
-            app.UseHealthChecks("/health");
-            app.UseHealthChecksUI(o =>
-            {
-                o.UIPath = "/health-ui";
-                o.ApiPath = "/health-ui-api";
-            });
+            if (_healthOptions == null || !_healthOptions.Enable || !_healthOptions.EnableUi)
+                return app;
+
+            return app
+                .UseHealthChecks("/health")
+                .UseHealthChecksUI(o =>
+                {
+                    o.UIPath = "/health-ui";
+                    o.ApiPath = "/health-ui-api";
+                });
         }
 
         public static void MapHealthChecksEndpoints(this IEndpointRouteBuilder routeBuilder)
         {
+            if (_healthOptions == null || !_healthOptions.Enable)
+                return;
+
             routeBuilder.MapHealthChecks("/healthz/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains(ReadyTag) });
             routeBuilder.MapHealthChecks("/healthz/live", new HealthCheckOptions { Predicate = check => check.Tags.Contains(LiveTag) });
             routeBuilder.MapHealthChecks("/healthz", new HealthCheckOptions
@@ -58,9 +73,20 @@ namespace MiniService
             });
         }
 
-        public static IServiceCollection AddGrpcServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddGrpcServices(this IServiceCollection services, params Assembly[] assemblies)
         {
-            services.RegisterClasses(searchPattern: "*Service", typeof(DependencyInjection).Assembly);
+            //services.RegisterClasses(searchPattern: "*Service", assemblies);
+            services.Scan(scan => scan
+                .FromAssemblies(assemblies)
+                .AddClasses(o => o.Where(x => x.Name.EndsWith("Service") && (x.BaseType?.Namespace?.StartsWith("Grpc.") ?? false)))
+                .AsSelf()
+                .WithScopedLifetime());
+
+            services.AddGrpc(o =>
+            {
+                o.Interceptors.Add<ClientCancelledInterceptor>();
+                o.Interceptors.Add<UserContextInterceptor>();
+            });
 
             return services;
         }
@@ -73,7 +99,5 @@ namespace MiniService
 
             return services;
         }
-
-        public static bool IsTrue(this IConfiguration configuration, string key) => configuration.GetValue<bool?>(key) == true;
     }
 }

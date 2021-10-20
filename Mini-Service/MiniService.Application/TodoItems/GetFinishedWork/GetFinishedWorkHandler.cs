@@ -6,6 +6,7 @@ using MiniService.Data.Persistence;
 using FluentResults;
 using Mapster;
 using MediatR;
+using Messaging.MiniService;
 using Microsoft.EntityFrameworkCore;
 
 namespace MiniService.Application.TodoItems.GetFinishedWork

@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Service.Controllers;
+using Messaging.MiniService;
 using MiniService.Application.TodoItems.GetFinishedWork;
 using MiniService.Data.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;

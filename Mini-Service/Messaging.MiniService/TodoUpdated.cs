@@ -1,16 +1,28 @@
-﻿using Messaging.MiniService.Enums;
+﻿using Messaging.Common;
+using Messaging.Common.Enums;
+using Messaging.MiniService.Enums;
 
 namespace Messaging.MiniService
 {
-    public class TodoUpdated
+    public class TodoUpdated : IEvent<ITodoItem>
     {
-        public TodoUpdated(ITodoItem todoItem, DataChangeType changeType)
+        public TodoUpdated(ITodoItem todoItem, EventType eventType, string userId)
         {
-            TodoItem = todoItem;
-            ChangeType = changeType;
+            Data = todoItem;
+            EventType = eventType;
+            UserId = userId;
         }
 
-        public ITodoItem TodoItem { get; set; }
-        public DataChangeType ChangeType { get; set; }
+        public EventType EventType { get; }
+        public ITodoItem? Data { get; }
+        public string UserId { get; }
+    }
+
+    public interface ITodoItem
+    {
+        int Id { get; set; }
+        string Title { get; set; }
+        bool Done { get; set; }
+        PriorityLevel Priority { get; set; }
     }
 }
