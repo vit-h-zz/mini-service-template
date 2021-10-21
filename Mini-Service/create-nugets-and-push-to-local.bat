@@ -9,7 +9,7 @@ if not exist %local_feed% mkdir %local_feed%
 :: Pack contract projects to the local nuget feed
 dotnet pack ./Grpc.MiniService/Grpc.MiniService.csproj -o %local_feed%
 dotnet pack ./Messaging.MiniService/Messaging.MiniService.csproj -o %local_feed%
-dotnet pack ./OpenApi.MiniService/OpenApi.MiniService.csproj -o %local_feed%
+dotnet pack ./OpenApi.MiniService/OpenApi.MiniService.csproj -o %local_feed% -c Release
 
 ::  dotnet pack --output nupkgs
 :: Find all nuget packages and push to local nuget

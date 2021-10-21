@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MiniService.Data.Persistence;
 using Common.Service;
 using MiniService.Application;
 #if AddGrpc
@@ -21,7 +20,7 @@ namespace MiniService
 
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -29,7 +28,7 @@ namespace MiniService
             services.AddWebApi();
             services.AddMassTransitServices(Configuration, _currentAssembly);
 #if AddGrpc
-            services.AddGrpcServices(Configuration, currentAssembly);
+            services.AddGrpcServices(_currentAssembly);
 #endif
             services.AddBackgroundWorker(Configuration);
             services.AddTelemetry(Configuration, ServiceName);
@@ -38,7 +37,6 @@ namespace MiniService
             services.AddHealthChecksServices(Configuration);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

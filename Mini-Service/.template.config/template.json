@@ -33,7 +33,7 @@
     {
       "modifiers": [
         {
-          "exclude": [ "./.vs/*" ]
+          "exclude": [ ".vs/**" ]
         },
         {
           "condition": "(!grpc)",

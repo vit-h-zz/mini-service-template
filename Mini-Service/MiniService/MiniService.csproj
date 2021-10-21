@@ -15,7 +15,7 @@
     <!-- Example of adding OpenApi reference via nuget package -->
     <!--
     <PackageReference Include="Grpc.TestService.Protos" Version="0.0.1" GeneratePathProperty="true" />
-    <Protobuf Include="$(PkgGrpc_TestService_Protos)/content/**/*.proto" GrpcServices="Client" />
+    <Protobuf Include="$(PkgGrpc_TestService_Protos)/content/**/*.proto" GrpcServices="Client" Link="Protos\TestService.proto"/>
     -->
   </ItemGroup>
   <!--#endif-->
@@ -52,7 +52,7 @@
   <!--
   <ItemGroup>
     <PackageReference Include="OpenApi.TestService.Spec" Version="0.0.1" GeneratePathProperty="true" />
-    <OpenApiReference Include="$(PkgOpenApi_TestService_Spec)/content/OpenAPI.*.json" CodeGenerator="NSwagCSharp" Namespace="OpenApiClientNamespace" ClassName="OpenApiClientClass" />
+    <OpenApiReference Include="$(PkgOpenApi_TestService_Spec)/content/OpenAPI.*.json" CodeGenerator="NSwagCSharp" Namespace="TestNs" ClassName="TestClass" />
     
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>

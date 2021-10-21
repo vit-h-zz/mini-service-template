@@ -70,6 +70,9 @@ namespace MiniService
             _serviceStoppingTokenSource.Cancel();
         }
 
+        /// <summary>
+        /// Prevent app from immediate stop and finish queue processing before shutting down
+        /// </summary>
         public override async Task StopAsync(CancellationToken appStoppingToken)
         {
             _stopRequested = true;

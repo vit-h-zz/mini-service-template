@@ -18,9 +18,7 @@
   </Target>
 
   <ItemGroup>
-    <None Update="OpenAPI.MiniService.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Content Include=".\OpenAPI.MiniService.json" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>
