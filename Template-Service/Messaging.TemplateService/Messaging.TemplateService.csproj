@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+
+    <Version>0.0.1</Version>
+    <IsPackable>true</IsPackable>
+    <PackageId>Messaging.TemplateService.Contracts</PackageId>
+    <PackageDescription>TemplateService messaging entities</PackageDescription>
+
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>CS8600,CS8602,CS8603,CS8618,CS8625,CS8425,CA1068,CA2016</WarningsAsErrors>
+    <RootNamespace>Messaging.TemplateService</RootNamespace>
+    <AssemblyName>Messaging.TemplateService</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="VH.MiniService.Messaging.Common" Version="1.0.0-local-2021-11-02--13-09-07" />
+  </ItemGroup>
+
+</Project>

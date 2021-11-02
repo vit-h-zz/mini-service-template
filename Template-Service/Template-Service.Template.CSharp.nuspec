@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+	<metadata>
+		<id>MiniService.Template.CSharp</id>
+		<version>1.0.0</version>
+		<description>
+			Creates the MicroService project powered by OpenApi, Grpc and RabbitMq via MassTransit with sub-projects and tests.
+			Originally taken from here https://github.com/vit-h/mini-service-template
+			Common libraries originaly taken from https://github.com/vit-h/mini-service-common
+			All enhancements that are not business-specific should be submitted via PullRequest or Issue to the original GitHub repository to ensure the original template is enriching with the latest best practices.
+		</description>
+		<authors>Vitalii Honcharuk</authors>
+		<copyright>Copyright ©2021+ Vitalii Honcharuk</copyright>
+		<projectUrl>https://github.com/vit-h/mini-service-template</projectUrl>
+		<license type="expression">Apache-2.0</license>
+		<!-- <icon>icon.png</icon> -->
+		<packageTypes>
+			<packageType name="Template" />
+		</packageTypes>
+		<tags>web MiniService MicroService Mini Service Micro Service webapi grpc example template clean architecture xUnit WebApplicationFactory</tags>
+	</metadata>
+    <files>
+		<file src=".\"
+			exclude="**\bin;**\obj;**\.vs\**"
+				target="src" />
+	</files>
+</package>

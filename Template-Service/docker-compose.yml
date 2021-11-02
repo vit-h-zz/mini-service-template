@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    container_name: rabbitMq
+    image: rabbitmq:3.9-management
+    hostname: rabbitmq
+    volumes:
+        # TODO: Setup automatic user creation with name 'app'
+      - ./rabbitmq/etc/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq/etc/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq/data:/var/lib/rabbitmq/mnesia/rabbit@my-rabbit
+      - ./rabbitmq/logs:/var/log/rabbitmq/log
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+
+  db:
+    container_name: postgresDb
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      #POSTGRES_DB: TemplateServiceDb
+    ports:
+      - 5432:5432

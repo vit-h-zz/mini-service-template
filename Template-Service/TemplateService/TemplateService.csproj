@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>CS8600,CS8602,CS8603,CS8618,CS8625,CS8425,CA1068,CA2016</WarningsAsErrors>
+    <RootNamespace>TemplateService</RootNamespace>
+    <AssemblyName>TemplateService</AssemblyName>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <!--#if AddGrpc-->
+  <ItemGroup>
+    <Protobuf Include="Protos\todos.proto" GrpcServices="Server" />
+    <!-- Example of adding OpenApi reference via nuget package -->
+    <!--
+    <PackageReference Include="Grpc.TestService.Protos" Version="0.0.1" GeneratePathProperty="true" />
+    <Protobuf Include="$(PkgGrpc_TestService_Protos)/content/**/*.proto" GrpcServices="Client" Link="Protos\TestService.proto"/>
+    -->
+  </ItemGroup>
+  <!--#endif-->
+
+  <ItemGroup>
+    <!--#if AddGrpc-->
+    <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
+    <!--#endif-->
+    <PackageReference Include="IdentityModel" Version="5.2.0" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="7.2.3" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.3" />
+    <PackageReference Include="VH.MiniService.Common.Service" Version="1.0.0-local-2021-11-02--13-09-07" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI" Version="5.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="5.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="5.0.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TemplateService.Application\TemplateService.Application.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
+    <!-- Put OpenApi.json to the lib for packing it to nuget -->
+    <Exec Command="dotnet swagger tofile --output .\..\OpenApi.TemplateService\OpenAPI.TemplateService.json $(OutputPath)\$(AssemblyName).dll v1 " />
+  </Target>
+
+  <ItemGroup>
+    <!-- Hide linked content files from nugets -->
+    <Content Remove="C:\**\packages\**" />
+  </ItemGroup>
+
+  <!-- Example of adding OpenApi reference via nuget package -->
+  <!--
+  <ItemGroup>
+    <PackageReference Include="OpenApi.TestService.Spec" Version="0.0.1" GeneratePathProperty="true" />
+    <OpenApiReference Include="$(PkgOpenApi_TestService_Spec)/content/OpenAPI.*.json" CodeGenerator="NSwagCSharp" Namespace="TestNs" ClassName="TestClass" />
+    
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="3.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NSwag.ApiDescription.Client" Version="13.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  -->
+
+</Project>

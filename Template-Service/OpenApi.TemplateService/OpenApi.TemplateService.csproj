@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+
+    <Version>0.0.1</Version>
+    <IsPackable>true</IsPackable>
+    <PackageId>OpenApi.TemplateService.Spec</PackageId>
+    <PackageDescription>TemplateService OpenAPI spec</PackageDescription>
+  </PropertyGroup>
+  
+  <!-- Build web service in Release to generate OpenApi spec, generation configured only for release for not to slowdown dev build -->
+  <!-- This project can be unloaded from .sln to skip build locally -->
+  <Target Name="PreBuild" AfterTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Release'">
+    <Exec Command="dotnet build .\..\TemplateService\TemplateService.csproj -c Release" />
+
+    <!-- TODO: Add git hook to check the '<Version>...</Version>' updated if OpenApi.json file chaged, example https://www.reddit.com/r/git/comments/3o1tut/precommit_hook_to_make_sure_you_updated_the/ -->
+  </Target>
+
+  <ItemGroup>
+    <Content Include=".\OpenAPI.TemplateService.json" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+</Project>
