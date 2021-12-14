@@ -11,17 +11,17 @@ There are two options to install the template: from local files and via nuget pa
 2. Pack the template to NuGet package by the instructions provided in the .nuspec file
 `C:\W\nuget.exe pack .\Template-Service\Template-Service.Template.CSharp.nuspec -OutputDirectory C:\Temp -NoDefaultExcludes`
 3. Install the template from the NuGet package to the dotnet to check it works
-`dotnet new --install C:\Temp\TemplateService.Template.CSharp.0.0.1.nupkg`
+`dotnet new --install C:\Temp\MiniService.Template.CSharp.VH.0.0.1.nupkg`
 4. See "Using Template"
 
 ## Uninstall
-dotnet new --uninstall TemplateService.Template.CSharp
+dotnet new --uninstall MiniService.Template.CSharp.VH
 or when installed from repo (no need to reinstall when changed files)
 dotnet new --uninstall C:\W\Service-Template\Template-Service
 
 # Using Template
 1. Clone the repo where you want the template
-2. Ex Command: `dotnet new mst -o ../My-Service --basename MyService`
+2. Ex Command: `dotnet new mst.vh -o ../My-Service --basename MyService`
 3. Options:
 - Output (required): `-o ./path/to/repo`
 - Base Name (required): `--basename {ServiceName}`

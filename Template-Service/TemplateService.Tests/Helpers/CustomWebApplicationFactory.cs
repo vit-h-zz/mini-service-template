@@ -13,11 +13,20 @@ using VH.MiniService.Common.Application.Abstractions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using NodaTime;
+using Xunit.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace TemplateService.Tests.Helpers
 {
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public CustomWebApplicationFactory(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         public Mock<IClock> ClockMock { get; } = new();
         public string TestUserId { get; } = Guid.NewGuid().ToString();
 
@@ -49,7 +58,14 @@ namespace TemplateService.Tests.Helpers
                     b.EnableSensitiveDataLogging();
                 });
 
-                services.Replace(ServiceDescriptor.Scoped<IUserContext>(_ => new TestUserContext(TestUserId)));
+                services.AddLogging(builder => builder.ClearProviders().AddConsole().AddDebug());
+                ////https://www.meziantou.net/how-to-get-asp-net-core-logs-in-the-output-of-xunit-tests.htm
+                //services.AddLogging(loggingBuilder =>
+                //{
+                //    loggingBuilder.ClearProviders();
+                //    //loggingBuilder.Services.AddSingleton<ILoggerProvider>(serviceProvider => new XUnitLoggerProvider(_testOutputHelper));
+                //});
+
                 services.Replace(ServiceDescriptor.Singleton(_ => ClockMock.Object));
 
                 // Register MassTransit consumers
@@ -73,8 +89,6 @@ namespace TemplateService.Tests.Helpers
 
                 services.AddSingleton<IPublishEndpoint>(provider => provider.GetRequiredService<IBusControl>());
                 services.AddSingleton<ISendEndpointProvider>(provider => provider.GetRequiredService<IBusControl>());
-
-                //var sp = services.BuildServiceProvider(true);
             });
     }
 }

@@ -32,7 +32,7 @@ namespace TemplateService
 #endif
             services.AddBackgroundWorker(Configuration);
             services.AddTelemetry(Configuration, ServiceName);
-            services.AddApplication(Configuration);
+            services.AddApplication(Configuration.GetSection(nameof(Application)));
             services.AddDatabase(Configuration);
             services.AddHealthChecksServices(Configuration);
         }

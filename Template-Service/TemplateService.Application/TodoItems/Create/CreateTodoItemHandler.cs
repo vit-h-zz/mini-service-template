@@ -6,7 +6,6 @@ using MassTransit;
 using MediatR;
 using VH.MiniService.Messaging.Common.Enums;
 using Messaging.TemplateService;
-using Messaging.TemplateService.Enums;
 using TemplateService.Data.Domain.Entities;
 using TemplateService.Data.Persistence;
 
@@ -16,18 +15,18 @@ namespace TemplateService.Application.TodoItems.Create
     {
         private readonly AppDbContext _db;
         private readonly IPublishEndpoint _publisher;
-        private readonly IUserContext _userContext;
+        private readonly IRequestContext _requestContext;
 
-        public CreateTodoItemHandler(AppDbContext db, IPublishEndpoint publisher, IUserContext userContext)
+        public CreateTodoItemHandler(AppDbContext db, IPublishEndpoint publisher, IRequestContext requestContext)
         {
             _db = db;
             _publisher = publisher;
-            _userContext = userContext;
+            _requestContext = requestContext;
         }
 
         public async Task<Result<TodoItem>> Handle(CreateTodoItemCommand r, CancellationToken ct)
         {
-            var userId = _userContext.GetUserId();
+            var userId = _requestContext.UserIdOrThrow;
             var entity = new TodoItem
             {
                 Title = r.Title,

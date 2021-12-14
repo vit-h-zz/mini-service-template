@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using VH.MiniService.Common.Extensions;
 using Messaging.TemplateService;
 using Messaging.TemplateService.Enums;
-using TemplateService.Application.TodoItems.GetFinishedWork;
 using TemplateService.Data.Domain.Entities;
 using TemplateService.Data.Persistence;
 using TemplateService.Features.Todos;
@@ -23,6 +22,8 @@ using Xunit;
 using TemplateService.Application.TodoItems.Create;
 using TemplateService.Application.TodoItems.Update;
 using VH.MiniService.Common.Tests;
+using VH.MiniService.Common;
+using Xunit.Abstractions;
 
 namespace TemplateService.Tests.Integration
 {
@@ -34,19 +35,23 @@ namespace TemplateService.Tests.Integration
         private readonly AppDbContext _dbContext;
         private readonly IServiceScope _scope;
         private readonly HttpClient _client;
+        private readonly ITestOutputHelper _output; // Use as a Console.WriteLine() in tests
 
-        public TodoItemsApiTests()
+        public TodoItemsApiTests(ITestOutputHelper testOutputHelper)
         {
-            _factory = new CustomWebApplicationFactory<Startup>();
+            _output = testOutputHelper;
+
+            _factory = new CustomWebApplicationFactory<Startup>(_output);
             _client = _factory.CreateClient();
+            _client.SetAccessToken(new Dictionary<string, object> { { CommonRequestHeaders.UserId, 111 } });
 
             _scope = _factory.Services.CreateScope();
             _dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             _harness = _factory.Services.GetRequiredService<InMemoryTestHarness>();
             _harness.AddMassTransitTestMiddleware(_factory.Services);
-
             _harness.Start();
+            _harness.AddDefaultHeaders((CommonRequestHeaders.UserId, 111));
         }
 
         [Theory, AutoMoqData]
@@ -69,6 +74,7 @@ namespace TemplateService.Tests.Integration
 
             // assert
             response.Message.ClosingTime.Should().Be(closingTime.ToDateTimeOffset());
+            response.Headers.Get<int>("myCustomHeader").Should().Be(123);
 
             await _dbContext.Entry(item1).ReloadAsync();
             item1.Done.Should().BeTrue();

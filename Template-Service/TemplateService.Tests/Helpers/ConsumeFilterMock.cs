@@ -28,7 +28,7 @@ namespace TemplateService.Tests.Helpers
 
         public void Probe(ProbeContext context)
         {
-            context.CreateFilterScope("ConsumeFilterMock");
+            context.CreateFilterScope(nameof(ConsumeFilterMock<TMessage>));
         }
     }
 }

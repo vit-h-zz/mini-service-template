@@ -19,21 +19,21 @@ namespace TemplateService.Application.TodoItems.Complete
     {
         private readonly AppDbContext _db;
         private readonly IPublishEndpoint _publisher;
-        private readonly IUserContext _userContext;
+        private readonly IRequestContext _requestContext;
         private readonly IClock _clock;
 
         public CompleteTodoItemHandler(AppDbContext db, IPublishEndpoint publisher,
-            IClock clock, IUserContext userContext)
+            IClock clock, IRequestContext requestContext)
         {
             _db = db;
             _publisher = publisher;
             _clock = clock;
-            _userContext = userContext;
+            _requestContext = requestContext;
         }
 
         public async Task<Result<CompleteTodoItemResult>> Handle(CompleteTodoItemCommand r, CancellationToken ct)
         {
-            var userId = _userContext.GetUserId();
+            var userId = _requestContext.UserIdOrThrow;
             var item = await _db.TodoItems.FirstOrDefaultAsync(x => x.Id == r.Id, ct);
 
             if (item == null) return Result.Fail(new NotFoundError<TodoItem, CompleteTodoItemCommand>());

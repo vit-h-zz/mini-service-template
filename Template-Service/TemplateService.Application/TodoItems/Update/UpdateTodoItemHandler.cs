@@ -9,6 +9,7 @@ using MassTransit;
 using MediatR;
 using Messaging.TemplateService;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using TemplateService.Data.Domain.Entities;
 using TemplateService.Data.Persistence;
 
@@ -18,18 +19,18 @@ namespace TemplateService.Application.TodoItems.Update
     {
         private readonly AppDbContext _db;
         private readonly IPublishEndpoint _publisher;
-        private readonly IUserContext _userContext;
+        private readonly IRequestContext _requestContext;
 
-        public UpdateTodoItemHandler(AppDbContext db, IPublishEndpoint publisher, IUserContext userContext)
+        public UpdateTodoItemHandler(AppDbContext db, IPublishEndpoint publisher, IRequestContext requestContext)
         {
             _db = db;
             _publisher = publisher;
-            _userContext = userContext;
+            _requestContext = requestContext;
         }
 
         public async Task<Result> Handle(UpdateTodoItemCommand r, CancellationToken ct)
         {
-            var userId = _userContext.GetUserId();
+            var userId = _requestContext.UserIdOrThrow;
 
             var canUpdate = await _db.TodoItems.AnyAsync(x => x.Id == r.Id && !x.Done, ct);
 

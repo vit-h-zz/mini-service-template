@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using VH.MiniService.Common.Service.MassTransit;
+using FluentResults;
 using Mapster;
 using MassTransit;
 using MediatR;
@@ -22,11 +25,10 @@ namespace TemplateService.Features.Todos
             _mediator = mediator;
         }
 
-        public async Task Consume(ConsumeContext<CompleteTodoItemCmd> context)
-        {
-            var result = await _mediator.Send(context.Message.Adapt<CompleteTodoItemCommand>(), context.CancellationToken);
-
-            await context.RespondAsync(result.Value);
-        }
+        public Task Consume(ConsumeContext<CompleteTodoItemCmd> context)
+            => _mediator.Handle(context,
+                asMediatorRequest: TypeAdapter.Adapt<CompleteTodoItemCommand>,
+                asMessageResult: null, //TypeAdapter.Adapt<CompleteTodoItemResult>,
+                sendCtx => sendCtx.Headers.Set("myCustomHeader", 123));
     }
 }

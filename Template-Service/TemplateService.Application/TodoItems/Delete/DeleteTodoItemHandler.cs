@@ -17,18 +17,18 @@ namespace TemplateService.Application.TodoItems.Delete
     {
         private readonly AppDbContext _db;
         private readonly IPublishEndpoint _publisher;
-        private readonly IUserContext _userContext;
+        private readonly IRequestContext _requestContext;
 
-        public DeleteTodoItemHandler(AppDbContext db, IPublishEndpoint publisher, IUserContext userContext)
+        public DeleteTodoItemHandler(AppDbContext db, IPublishEndpoint publisher, IRequestContext requestContext)
         {
             _db = db;
             _publisher = publisher;
-            _userContext = userContext;
+            _requestContext = requestContext;
         }
 
         public async Task<Result> Handle(DeleteTodoItemCommand r, CancellationToken ct)
         {
-            var userId = _userContext.GetUserId();
+            var userId = _requestContext.UserIdOrThrow;
 
             var entity = await _db.TodoItems.FindByKeyAsync(r.Id, ct);
 

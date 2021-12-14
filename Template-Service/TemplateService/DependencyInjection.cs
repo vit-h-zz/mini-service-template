@@ -85,7 +85,6 @@ namespace TemplateService
             services.AddGrpc(o =>
             {
                 o.Interceptors.Add<ClientCancelledInterceptor>();
-                o.Interceptors.Add<UserContextInterceptor>();
             });
 
             return services;
