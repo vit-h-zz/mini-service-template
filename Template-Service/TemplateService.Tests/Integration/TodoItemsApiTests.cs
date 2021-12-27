@@ -24,6 +24,9 @@ using TemplateService.Application.TodoItems.Update;
 using VH.MiniService.Common.Tests;
 using VH.MiniService.Common;
 using Xunit.Abstractions;
+using Moq;
+using System.Threading;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace TemplateService.Tests.Integration
 {
@@ -88,11 +91,15 @@ namespace TemplateService.Tests.Integration
         }
 
         [Theory, AutoMoqData]
-        public async Task GetTodoItems(ToDoItemExistingFaker existingFaker)
+        public async Task GetTodoItems(ToDoItemExistingFaker existingFaker, string testKey, byte[] testValue)
         {
             // arrange
             _dbContext.TodoItems.AddRange(existingFaker.Generate(2));
             await _dbContext.SaveChangesAsync();
+
+            _factory.CacheMock
+                .Setup(c => c.GetAsync(testKey, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(testValue);
 
             // act
             var items = await _client.Get<List<TodoItem>>(ToDoUrl);
@@ -100,6 +107,10 @@ namespace TemplateService.Tests.Integration
             // assert
             items.Should().NotBeNull();
             items.Should().HaveCount(2);
+
+            _factory.CacheMock.Verify(c => c
+                .SetAsync(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(),
+                    It.IsAny<CancellationToken>()), Times.Once());
         }
 
         [Theory, AutoMoqData]

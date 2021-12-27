@@ -12,7 +12,7 @@
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="10.3.4" />
     <PackageReference Include="Mapster" Version="7.2.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
-    <PackageReference Include="VH.MiniService.Common.Application" Version="1.0.1-local-2021-12-14--17-56-34" />
+    <PackageReference Include="VH.MiniService.Common.Application" Version="1.0.2-local-2021-12-27--21-20-20" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,7 +9,6 @@ using MassTransit;
 using MediatR;
 using Messaging.TemplateService;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using TemplateService.Data.Domain.Entities;
 using TemplateService.Data.Persistence;
 

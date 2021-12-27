@@ -22,7 +22,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.11" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.11" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-    <PackageReference Include="VH.MiniService.Common.Tests" Version="1.0.1-local-2021-12-14--17-56-34" />
+    <PackageReference Include="VH.MiniService.Common.Tests" Version="1.0.2-local-2021-12-27--21-20-20" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="Moq.EntityFrameworkCore" Version="5.0.0.2" />
     <PackageReference Include="xunit.core" Version="2.4.1" />

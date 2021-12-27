@@ -32,3 +32,10 @@ services:
       #POSTGRES_DB: TemplateServiceDb
     ports:
       - 5432:5432
+
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+    ports:
+      - 6379:6379
+    command: redis-server --save 60 1 --requirepass devPass --loglevel warning

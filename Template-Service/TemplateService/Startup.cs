@@ -35,6 +35,7 @@ namespace TemplateService
             services.AddApplication(Configuration.GetSection(nameof(Application)));
             services.AddDatabase(Configuration);
             services.AddHealthChecksServices(Configuration);
+            services.AddRedisDistributedCache(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

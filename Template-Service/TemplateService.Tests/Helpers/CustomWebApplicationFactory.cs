@@ -9,12 +9,12 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using TemplateService.Data.Persistence;
-using VH.MiniService.Common.Application.Abstractions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using NodaTime;
 using Xunit.Abstractions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace TemplateService.Tests.Helpers
 {
@@ -28,6 +28,7 @@ namespace TemplateService.Tests.Helpers
         }
 
         public Mock<IClock> ClockMock { get; } = new();
+        public Mock<IDistributedCache> CacheMock { get; } = new();
         public string TestUserId { get; } = Guid.NewGuid().ToString();
 
         protected override IHostBuilder CreateHostBuilder() => base
@@ -41,7 +42,8 @@ namespace TemplateService.Tests.Helpers
                     //{"Database:DetailedErrors", "true"},
                     {"Database:HealthChecks:Enable", "false"},
                     {"MassTransit:Enable", "false"},
-                    {"AppHealthChecks:Enable", "false"}
+                    {"AppHealthChecks:Enable", "false"},
+                    {"Redis:Enable", "false"}
                 }
             }));
 
@@ -67,6 +69,7 @@ namespace TemplateService.Tests.Helpers
                 //});
 
                 services.Replace(ServiceDescriptor.Singleton(_ => ClockMock.Object));
+                services.Replace(ServiceDescriptor.Singleton(_ => CacheMock.Object));
 
                 // Register MassTransit consumers
                 services.Scan(scan => scan

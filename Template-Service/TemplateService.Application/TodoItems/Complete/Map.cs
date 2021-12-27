@@ -1,6 +1,5 @@
 ﻿using Messaging.TemplateService;
 using Mapster;
-using TemplateService.Application.TodoItems.GetFinishedWork;
 using TemplateService.Data.Domain.Entities;
 
 namespace TemplateService.Application.TodoItems.Complete
