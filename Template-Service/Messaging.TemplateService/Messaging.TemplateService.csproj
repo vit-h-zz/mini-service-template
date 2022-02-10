@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="VH.MiniService.Messaging.Common" Version="1.0.0-local-2021-12-27--21-20-20" />
+    <PackageReference Include="VH.MiniService.Messaging.Common" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

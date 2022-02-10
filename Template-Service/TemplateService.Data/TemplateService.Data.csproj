@@ -14,8 +14,8 @@
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="5.0.11" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
-    <PackageReference Include="VH.MiniService.Common" Version="1.0.2-local-2021-12-27--21-20-20" />
-    <PackageReference Include="VH.MiniService.Common.Data" Version="1.0.2-local-2021-12-27--21-20-20" />
+    <PackageReference Include="VH.MiniService.Common" Version="1.0.0" />
+    <PackageReference Include="VH.MiniService.Common.Data" Version="1.0.0" />
     <PackageReference Include="NodaTime" Version="3.0.9" />
     <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime" Version="5.0.10" />
