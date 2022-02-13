@@ -61,9 +61,11 @@ There are two options to install the template: from local files and via nuget pa
 4. See "Using Template"
 
 ## Uninstall
-dotnet new --uninstall MiniService.Template.CSharp.VH
+`dotnet new --uninstall MiniService.Template.CSharp.VH`
+
 or when installed from repo (no need to reinstall when changed files)
-dotnet new --uninstall C:\W\Service-Template\Template-Service
+
+`dotnet new --uninstall C:\W\Service-Template\Template-Service`
 
 # Using Template
 1. Clone the repo where you want the template
