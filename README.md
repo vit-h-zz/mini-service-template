@@ -44,7 +44,7 @@ TODO features:
 10. GitHub CI/CD workflows for microservices
 11. Dev data seeding
 
-# Local Template Setup
+# How to use Template
 There are two options to install the template: from local files and via nuget package.
 
 ## Local-Files Install (a)
