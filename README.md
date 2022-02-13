@@ -18,7 +18,7 @@ Enterprise grade microservice template with packagable common libraries extracte
 14. Open Telemetry, Tracing with Jaeger
 15. Exceptions handling with Fluent Results - wraps results and errors, so only unhandled exceptions means a problem
 16. HealthChecks for Readiness and Liveness probes
-17. Tests with WebAssembly, xUnit, FluentAssertions, Moq and AutoBogus with providing dependencies as test params
+17. Tests with WebApplicationFactory, xUnit, FluentAssertions, Moq and AutoBogus with providing dependencies as test params
 18. Packagable base libs with microservice settings (to update all microservices by pkg update)
 19. Packagable OpenApi.json communication contracts as NuGet (for easy microservices connect)
 20. Packagable RabbitMq communication contracts as NuGet (for easy microservices connect)
