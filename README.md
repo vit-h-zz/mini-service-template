@@ -1,3 +1,6 @@
+# Miniservice template
+Enterprise grade microservice template with packagable common libraries extracted to the [separate repo](https://github.com/vit-h/mini-service-common)
+
 # Features list
 1. ASP.NET 5
 2. Packageable .NET template
